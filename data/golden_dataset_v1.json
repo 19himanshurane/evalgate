@@ -1,0 +1,406 @@
+{
+  "version": "v1",
+  "created_at": "2026-08-15T00:00:00Z",
+  "cases": [
+    {
+      "id": "tc-001",
+      "email": "I just bought a wireless flash trigger for my Canon DSLR Camera, but the camera doesn't seem to recognize it when I mount it on the hot shoe. Is this trigger even compatible, or do I need a firmware update?",
+      "expected_category": "technical",
+      "expected_summary": "Their wireless flash trigger isn't being recognized by their Canon DSLR Camera and wants to know if it's a compatibility or firmware issue.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #5023 (subject='Peripheral compatibility', product='Canon DSLR Camera'). A malfunctioning accessory pairing is a clear technical case."
+    },
+    {
+      "id": "tc-002",
+      "email": "I currently have a Google Nest thermostat and I'm thinking about adding a Nest camera too. Would you recommend the indoor or outdoor model for monitoring a front porch?",
+      "expected_category": "general",
+      "expected_summary": "Asking for a recommendation between the indoor and outdoor Nest camera models for monitoring a front porch.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #268 (subject='Product recommendation', product='Google Nest'). Auto-mapped category from Kaggle's Ticket Type was 'technical' -- overridden to general since this is a pre-sales question with no malfunction."
+    },
+    {
+      "id": "tc-003",
+      "email": "I'm deciding between the Google Pixel and another phone for my teenager's first phone. Does the Pixel have good parental control options built in?",
+      "expected_category": "general",
+      "expected_summary": "Asking whether the Google Pixel has good built-in parental controls before buying it for their teenager.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7541 (subject='Product recommendation', product='Google Pixel'). Same override reasoning as tc-002: pre-sales question, not a bug."
+    },
+    {
+      "id": "tc-004",
+      "email": "I ordered a Lenovo ThinkPad three days ago but haven't received a shipping confirmation yet. I'd like to cancel the order before it ships.",
+      "expected_category": "account",
+      "expected_summary": "Wants to cancel their Lenovo ThinkPad order before it ships since it hasn't shipped yet.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #8062 (subject='Cancellation request', product='Lenovo ThinkPad'). Auto-mapped as 'technical' from Ticket Type -- overridden to account, since cancelling an order is an account/order-management action."
+    },
+    {
+      "id": "tc-005",
+      "email": "I can't get my new Canon EOS to pair with the companion app on my phone during initial setup -- it just times out at the 'Connecting to camera' step every time. I have a shoot tomorrow morning and need this working.",
+      "expected_category": "technical",
+      "expected_summary": "Can't get their new Canon EOS to pair with the companion app during setup and needs it working before a shoot tomorrow.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #6776 (subject='Product setup', product='Canon EOS'). Setup/pairing bug with real time pressure attached, slightly less templated than a plain bug report."
+    },
+    {
+      "id": "tc-006",
+      "email": "My Bose SoundLink Speaker randomly disconnects from Bluetooth every few minutes even when I'm sitting right next to it. It was working fine last week.",
+      "expected_category": "technical",
+      "expected_summary": "Their Bose SoundLink Speaker keeps randomly disconnecting from Bluetooth at close range, despite working fine last week.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7882 (subject='Software bug', product='Bose SoundLink Speaker'). Straightforward connectivity bug report."
+    },
+    {
+      "id": "tc-007",
+      "email": "The Amazon Echo I ordered arrived with a cracked case. I'd like a full refund rather than a replacement, since I've already found a similar device elsewhere.",
+      "expected_category": "billing",
+      "expected_summary": "Wants a full refund for a damaged Amazon Echo instead of a replacement.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7736 (subject='Refund request', product='Amazon Echo'). Auto-mapped as 'technical' from Ticket Type -- overridden to billing since the actual ask is money back."
+    },
+    {
+      "id": "tc-008",
+      "email": "I'd like to cancel my Amazon Echo subscription add-on (the extended warranty plan) that I signed up for at checkout. How do I do that from my account?",
+      "expected_category": "account",
+      "expected_summary": "Wants to cancel the extended warranty add-on they signed up for and asks how to do it from their account.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #925 (subject='Cancellation request', product='Amazon Echo'). Cancelling a plan/add-on is an account-management action."
+    },
+    {
+      "id": "tc-009",
+      "email": "I tried to buy a MacBook Pro from your store and my payment failed twice, but I can see two pending holds on my bank statement for the full amount. Can you clear those?",
+      "expected_category": "billing",
+      "expected_summary": "Had a failed MacBook Pro purchase but sees two pending holds on their bank statement and wants them cleared.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #1907 (subject='Payment issue', product='MacBook Pro'). Clear billing case despite the 'Technical issue' Ticket Type label."
+    },
+    {
+      "id": "tc-010",
+      "email": "I just switched from Android to iPhone and the setup wizard won't let me transfer my photos -- it gets stuck at 'Preparing to transfer' and never finishes.",
+      "expected_category": "technical",
+      "expected_summary": "The iPhone setup wizard gets stuck while trying to transfer photos from their old Android phone.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7066 (subject='Product setup', product='iPhone'). Setup/migration bug, realistic cross-platform onboarding failure."
+    },
+    {
+      "id": "tc-011",
+      "email": "I'm trying to mount my new Sony 4K HDR TV using the wall bracket that came in the box, but two of the mounting holes on the back of the TV don't line up with the bracket at all.",
+      "expected_category": "technical",
+      "expected_summary": "The wall-mount bracket that came with their Sony 4K HDR TV doesn't line up with the TV's mounting holes.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #3707 (subject='Installation support', product='Sony 4K HDR TV'). Physical hardware-fit problem, product not working as expected."
+    },
+    {
+      "id": "tc-012",
+      "email": "My GoPro Action Camera won't connect to the GoPro app during setup -- it finds the camera over Wi-Fi but then just says 'Connection failed' every time.",
+      "expected_category": "technical",
+      "expected_summary": "Their GoPro Action Camera won't finish connecting to the GoPro app during setup, always showing 'Connection failed.'",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #8386 (subject='Product setup', product='GoPro Action Camera'). App-pairing setup bug, clean single-issue report."
+    },
+    {
+      "id": "tc-013",
+      "email": "My Philips Hue Lights keep dropping off my home network every night around the same time, and I have to unplug and replug the bridge to get them back online.",
+      "expected_category": "technical",
+      "expected_summary": "Their Philips Hue Lights repeatedly drop off the network every night and require unplugging the bridge to reconnect.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #2623 (subject='Network problem', product='Philips Hue Lights'). Auto-mapped as 'account' (from Ticket Type='Cancellation request') -- overridden to technical since the Subject field ('Network problem') is a clean connectivity bug, a good example of Type/Subject disagreeing."
+    },
+    {
+      "id": "tc-014",
+      "email": "cant login 2 my asus rog app, keeps sayin invalid session, tried 5x already pls help",
+      "expected_category": "account",
+      "expected_summary": "Can't log into the Asus ROG companion app because it keeps showing an 'invalid session' error.",
+      "difficulty": "hard",
+      "notes": "Source: Kaggle ticket #4014 (subject='Account access', product='Asus ROG'). Deliberately heavy typos/shorthand to test robustness to informal writing style."
+    },
+    {
+      "id": "tc-015",
+      "email": "The LCD screen on my Dyson Vacuum Cleaner handle shows a battery icon that's stuck at 'charging' even after I've unplugged it and used it for twenty minutes.",
+      "expected_category": "technical",
+      "expected_summary": "The LCD display on their Dyson Vacuum Cleaner is stuck showing a 'charging' battery icon even after unplugging and using it.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #3921 (subject='Display issue', product='Dyson Vacuum Cleaner'). Auto-mapped as 'account' -- overridden to technical, a clear device defect."
+    },
+    {
+      "id": "tc-016",
+      "email": "I want to cancel my Microsoft 365 subscription that came bundled with my Surface purchase. I only need the device, not the software subscription.",
+      "expected_category": "account",
+      "expected_summary": "Wants to cancel the Microsoft 365 subscription bundled with their Surface purchase.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #1498 (subject='Cancellation request', product='Microsoft Surface'). Subscription cancellation, account/plan action."
+    },
+    {
+      "id": "tc-017",
+      "email": "I returned my Bose SoundLink Speaker two weeks ago and the tracking shows it was delivered to your warehouse, but I still haven't received my refund.",
+      "expected_category": "billing",
+      "expected_summary": "Returned their Bose SoundLink Speaker two weeks ago and still hasn't received the refund despite delivery confirmation.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #5227 (subject='Refund request', product='Bose SoundLink Speaker'). Auto-mapped as 'account' -- overridden to billing since this is fundamentally about money owed."
+    },
+    {
+      "id": "tc-018",
+      "email": "Will the Samsung Soundbar work with my older Samsung TV from 2019, or do I need a specific HDMI ARC version it might not support?",
+      "expected_category": "general",
+      "expected_summary": "Asking whether the Samsung Soundbar is compatible with their 2019 Samsung TV's HDMI ARC version.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #2032 (subject='Product compatibility', product='Samsung Soundbar'). Pre-purchase/spec question with no malfunction reported -- kept general rather than technical, contrast with tc-034 which reports an active malfunction."
+    },
+    {
+      "id": "tc-019",
+      "email": "I'm trying to register my new Amazon Kindle to my Amazon account during setup, but it keeps saying 'Account verification failed' no matter how many times I re-enter my password.",
+      "expected_category": "account",
+      "expected_summary": "Can't get their new Amazon Kindle to register to their Amazon account during setup due to a verification error.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #5809 (subject='Installation support', product='Amazon Kindle'). Genuinely between technical (setup) and account (verification failure) -- kept account since the specific blocker is account verification, not the device itself."
+    },
+    {
+      "id": "tc-020",
+      "email": "I'd like to cancel my order for the Samsung Soundbar -- I found a better price elsewhere and haven't received a shipping notice yet.",
+      "expected_category": "account",
+      "expected_summary": "Wants to cancel their Samsung Soundbar order since it hasn't shipped and they found a better price elsewhere.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #1070 (subject='Cancellation request', product='Samsung Soundbar'). Order cancellation, account/order-management action."
+    },
+    {
+      "id": "tc-021",
+      "email": "My payment for the Samsung Soundbar keeps failing at checkout even though the same card works fine on other websites. Can you check if something's wrong on your end?",
+      "expected_category": "billing",
+      "expected_summary": "Their payment for the Samsung Soundbar keeps failing at checkout despite the card working elsewhere.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #4966 (subject='Payment issue', product='Samsung Soundbar'). Auto-mapped as 'account' -- overridden to billing, a checkout/payment problem."
+    },
+    {
+      "id": "tc-022",
+      "email": "The waterproof case for my GoPro Hero seems to be letting water in -- I found condensation inside after a swim, even though I followed the sealing instructions.",
+      "expected_category": "technical",
+      "expected_summary": "Water is getting into their GoPro Hero's waterproof case despite following the sealing instructions.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #2681 (subject='Hardware issue', product='GoPro Hero'). Auto-mapped as 'account' -- overridden to technical, a clear product-malfunction report."
+    },
+    {
+      "id": "tc-023",
+      "email": "My Microsoft Surface used to last a full workday on a charge, but now the battery drains to zero in about three hours even with light use.",
+      "expected_category": "technical",
+      "expected_summary": "Their Microsoft Surface's battery now drains in about three hours, down from lasting a full workday.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #2656 (subject='Battery life', product='Microsoft Surface'). Auto-mapped as 'account' -- overridden to technical, a battery-degradation bug."
+    },
+    {
+      "id": "tc-024",
+      "email": "I was charged for a full year of Microsoft Office but I only meant to buy the one-month plan. Can this be corrected and the difference refunded?",
+      "expected_category": "billing",
+      "expected_summary": "Was charged for a full year of Microsoft Office instead of the one-month plan they meant to buy and wants the difference refunded.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #6 (subject='Payment issue', product='Microsoft Office'). Auto-mapped as 'account' -- overridden to billing, a wrong-charge-amount issue."
+    },
+    {
+      "id": "tc-025",
+      "email": "My MacBook Pro's keyboard has three keys that have stopped responding entirely -- the E, R, and F keys. This started suddenly yesterday with no spills or drops.",
+      "expected_category": "technical",
+      "expected_summary": "Three keys on their MacBook Pro (E, R, and F) suddenly stopped responding with no spills or drops.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7672 (subject='Hardware issue', product='MacBook Pro'). Auto-mapped as 'general' (from Ticket Type='Product inquiry') -- overridden to technical, a clear hardware failure, not an inquiry."
+    },
+    {
+      "id": "tc-026",
+      "email": "Does the GoPro Hero work with third-party mounts, or does it only fit official GoPro mounting accessories? I bought a generic chest mount and it doesn't seem to click in.",
+      "expected_category": "technical",
+      "expected_summary": "Asking whether the GoPro Hero works with third-party mounts after a generic chest mount didn't fit properly.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #434 (subject='Peripheral compatibility', product='GoPro Hero'). Compatibility question with an actual reported malfunction attached, so technical rather than general."
+    },
+    {
+      "id": "tc-027",
+      "email": "I was charged three separate times for one Bose SoundLink Speaker order. My bank statement shows three identical charges from yesterday.",
+      "expected_category": "billing",
+      "expected_summary": "Was charged three separate times for a single Bose SoundLink Speaker order.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #6123 (subject='Payment issue', product='Bose SoundLink Speaker'). Auto-mapped as 'general' -- overridden to billing, a multiple-charge issue."
+    },
+    {
+      "id": "tc-028",
+      "email": "I already own a Samsung Soundbar but just switched to a non-Samsung 4K TV. Will the soundbar still support Dolby Atmos passthrough with a different TV brand, or is that a Samsung-exclusive feature?",
+      "expected_category": "general",
+      "expected_summary": "Asking whether their Samsung Soundbar still supports Dolby Atmos passthrough now that they've switched to a non-Samsung TV.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #5600 (subject='Product compatibility', product='Samsung Soundbar'). Capability question, no malfunction reported -- general, same reasoning pattern as tc-018."
+    },
+    {
+      "id": "tc-029",
+      "email": "The digital display on my Dyson Vacuum Cleaner shows an error code 'E5' that isn't explained anywhere in the manual. What does it mean?",
+      "expected_category": "technical",
+      "expected_summary": "Getting an unexplained 'E5' error code on their Dyson Vacuum Cleaner's display and wants to know what it means.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #4770 (subject='Display issue', product='Dyson Vacuum Cleaner'). Shares the same Kaggle subject/product as tc-015 but deliberately written with a different angle (unexplained error code vs. stuck charging icon) to avoid a near-duplicate case."
+    },
+    {
+      "id": "tc-030",
+      "email": "wheres my vacuum?? ordered 5 days ago, nothing",
+      "expected_category": "general",
+      "expected_summary": "Asking where their vacuum order is after five days with no shipping movement.",
+      "difficulty": "hard",
+      "notes": "Source: Kaggle ticket #5954 (subject='Delivery problem', product='Dyson Vacuum Cleaner'). Deliberately extremely short, near-context-free input; kept general since our taxonomy has no dedicated shipping category."
+    },
+    {
+      "id": "tc-031",
+      "email": "My Roomba Robot Vacuum stopped working completely after two weeks and I'd rather get a refund than a replacement at this point. How do I start that process?",
+      "expected_category": "billing",
+      "expected_summary": "Wants a refund instead of a replacement for a Roomba Robot Vacuum that stopped working after two weeks.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #2565 (subject='Refund request', product='Roomba Robot Vacuum'). Auto-mapped as 'general' -- overridden to billing, explicit refund request."
+    },
+    {
+      "id": "tc-032",
+      "email": "My Sony PlayStation gets stuck on the initial system update during setup, stuck at 40% for over an hour with no progress.",
+      "expected_category": "technical",
+      "expected_summary": "Their Sony PlayStation is stuck at 40% on the initial system update during setup for over an hour.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #5763 (subject='Product setup', product='Sony PlayStation'). Auto-mapped as 'general' -- overridden to technical, a clear setup bug."
+    },
+    {
+      "id": "tc-033",
+      "email": "I'm trying to add a third Philips Hue Lights bulb to my existing bridge, but the app just doesn't detect it during the 'search for new lights' step.",
+      "expected_category": "technical",
+      "expected_summary": "The Philips Hue app can't detect a third bulb they're trying to add to their existing bridge.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #4439 (subject='Installation support', product='Philips Hue Lights'). Auto-mapped as 'general' -- overridden to technical, a setup/pairing bug."
+    },
+    {
+      "id": "tc-034",
+      "email": "I connected a soundbar to my LG Smart TV via optical cable but there's a noticeable audio delay compared to the video -- the lips don't match up anymore.",
+      "expected_category": "technical",
+      "expected_summary": "Notices an audio-video sync delay after connecting a soundbar to their LG Smart TV via optical cable.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #1908 (subject='Peripheral compatibility', product='LG Smart TV'). Active lip-sync malfunction between two connected devices -- technical, contrast with tc-018/tc-028 which have no reported malfunction."
+    },
+    {
+      "id": "tc-035",
+      "email": "I need help setting up my new LG OLED with the Magic Remote -- I paired it fine but half the voice commands just say 'command not recognized' even for basic things like 'turn up volume.'",
+      "expected_category": "technical",
+      "expected_summary": "Half of the Magic Remote's voice commands aren't recognized on their newly paired LG OLED TV.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #6176 (subject='Installation support', product='LG OLED'). Multi-step case: pairing succeeded but a specific feature partially fails, more nuanced than a flat setup failure."
+    },
+    {
+      "id": "tc-036",
+      "email": "Oh fantastic, charged TWICE for my iPhone installment this month. Really loving this 'convenient' payment plan you keep advertising. Can someone actually fix this?",
+      "expected_category": "billing",
+      "expected_summary": "Was charged twice for their iPhone installment payment this month and wants it fixed.",
+      "difficulty": "hard",
+      "notes": "Source: Kaggle ticket #6734 (subject='Payment issue', product='iPhone'). Deliberately sarcastic tone; tests that tone doesn't distract from the core billing issue (a duplicate charge)."
+    },
+    {
+      "id": "tc-037",
+      "email": "My Fitbit Charge won't pair with the Fitbit app during setup -- Bluetooth is on, but the app just says 'Searching...' indefinitely and never finds the device.",
+      "expected_category": "technical",
+      "expected_summary": "Their Fitbit Charge won't pair with the Fitbit app during setup and the app searches indefinitely.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #2001 (subject='Product setup', product='Fitbit Charge'). Auto-mapped as 'billing' (from Ticket Type='Billing inquiry') -- overridden to technical, another Type/Subject mismatch example."
+    },
+    {
+      "id": "tc-038",
+      "email": "I bought extra RAM for my HP Pavilion directly from your store and it turned out to be the wrong spec -- the laptop won't even POST with it installed. I want to return it for a refund, but will an incompatible upgrade also void the laptop's remaining warranty coverage?",
+      "expected_category": "billing",
+      "expected_summary": "Wants to return incompatible RAM they bought for their HP Pavilion and get a refund, and is also asking whether it affects their warranty.",
+      "difficulty": "hard",
+      "notes": "Source: Kaggle ticket #5590 (subject='Product compatibility', product='HP Pavilion'). Deliberately spans technical (wrong-spec compatibility, warranty question) and billing (explicit refund request) -- labeled billing since the stated action is a refund, but technical is defensible too. This is the dataset's intentionally ambiguous 'could be two categories' case."
+    },
+    {
+      "id": "tc-039",
+      "email": "I'm trying to install a second SSD in my HP Pavilion following your guide, but the BIOS doesn't detect the new drive at all after installation.",
+      "expected_category": "technical",
+      "expected_summary": "The BIOS on their HP Pavilion doesn't detect a newly installed second SSD.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #4426 (subject='Installation support', product='HP Pavilion'). Auto-mapped as 'billing' -- overridden to technical, a hardware installation bug."
+    },
+    {
+      "id": "tc-040",
+      "email": "My Sony 4K HDR TV was marked as 'delivered' by the courier, but I never received it and my porch camera shows no delivery at that time.",
+      "expected_category": "general",
+      "expected_summary": "Their Sony 4K HDR TV was marked delivered but never actually arrived, per their own porch camera footage.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #2164 (subject='Delivery problem', product='Sony 4K HDR TV'). Shipping/lost-package issue, kept general since it isn't a payment, device, or account matter."
+    },
+    {
+      "id": "tc-041",
+      "email": "I paid for expedited shipping on my Canon DSLR Camera but it's now three days past the guaranteed delivery date with no updates.",
+      "expected_category": "general",
+      "expected_summary": "Paid for expedited shipping on their Canon DSLR Camera but it's three days past the guaranteed delivery date.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #6278 (subject='Delivery problem', product='Canon DSLR Camera'). Shipping-delay complaint, kept general."
+    },
+    {
+      "id": "tc-042",
+      "email": "I'm choosing between the GoPro Action Camera and a competitor's model for filming while mountain biking. Which would you recommend for that kind of use?",
+      "expected_category": "general",
+      "expected_summary": "Asking for a recommendation between the GoPro Action Camera and a competitor's model for mountain biking footage.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #495 (subject='Product recommendation', product='GoPro Action Camera'). Auto-mapped as 'billing' -- overridden to general, a clear pre-purchase question."
+    },
+    {
+      "id": "tc-043",
+      "email": "I just got a new drawing tablet and Photoshop isn't recognizing the pressure sensitivity at all, even though the tablet driver shows it's connected and working.",
+      "expected_category": "technical",
+      "expected_summary": "Adobe Photoshop isn't recognizing pressure sensitivity from their new drawing tablet despite the tablet driver showing a working connection.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #836 (subject='Peripheral compatibility', product='Adobe Photoshop'). Auto-mapped as 'billing' -- overridden to technical. Kept medium since diagnosing driver-vs-app issues is genuinely more ambiguous than a plain crash report."
+    },
+    {
+      "id": "tc-044",
+      "email": "My Lenovo ThinkPad shipment shows it's stuck at a regional distribution center for the past four days with no tracking updates. Can you look into what's happening?",
+      "expected_category": "general",
+      "expected_summary": "Their Lenovo ThinkPad shipment has been stuck at a distribution center for four days with no updates.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #5141 (subject='Delivery problem', product='Lenovo ThinkPad'). Auto-mapped as 'billing' (from Ticket Type='Refund request', which didn't match the actual Subject) -- overridden to general, following the subject's meaning over the type."
+    },
+    {
+      "id": "tc-045",
+      "email": "I want to cancel my order for the LG Smart TV before it ships -- I found a better deal at another store this morning.",
+      "expected_category": "account",
+      "expected_summary": "Wants to cancel their LG Smart TV order before it ships after finding a better deal elsewhere.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #4343 (subject='Cancellation request', product='LG Smart TV'). Auto-mapped as 'billing' -- overridden to account, an order-cancellation action."
+    },
+    {
+      "id": "tc-046",
+      "email": "Hola, quick question -- el puerto de carga de mi Bose SoundLink Speaker se siente flojo and it only charges if I hold the cable at a weird angle. Can you help?",
+      "expected_category": "technical",
+      "expected_summary": "Their Bose SoundLink Speaker's charging port feels loose and only charges at certain cable angles.",
+      "difficulty": "hard",
+      "notes": "Source: Kaggle ticket #234 (subject='Hardware issue', product='Bose SoundLink Speaker'). Deliberately code-switches between Spanish and English; tests that mixed-language input doesn't derail classification."
+    },
+    {
+      "id": "tc-047",
+      "email": "After a recent system update, all of my saved game data on my Sony PlayStation disappeared from local storage. I don't think I had cloud backup turned on. Is there any way to recover it?",
+      "expected_category": "technical",
+      "expected_summary": "Lost all their saved game data on their Sony PlayStation after a system update and wants to know if it can be recovered.",
+      "difficulty": "medium",
+      "notes": "Source: Kaggle ticket #7532 (subject='Data loss', product='Sony PlayStation'). Auto-mapped as 'billing' -- overridden to technical. Kept medium given the higher stakes/urgency of data loss versus a routine bug."
+    },
+    {
+      "id": "tc-048",
+      "email": "The Nintendo Switch Pro Controller I ordered was supposed to arrive yesterday for my kid's birthday, but the tracking hasn't updated in two days.",
+      "expected_category": "general",
+      "expected_summary": "Their Nintendo Switch Pro Controller order hasn't updated in tracking for two days despite an expected delivery yesterday.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7467 (subject='Delivery problem', product='Nintendo Switch Pro Controller'). Shipping-delay complaint with a time-sensitive occasion attached, kept general."
+    },
+    {
+      "id": "tc-049",
+      "email": "Does the Sony 4K HDR TV support variable refresh rate (VRR) with a PS5 connected via HDMI 2.1, or do I need a firmware update first?",
+      "expected_category": "general",
+      "expected_summary": "Asking whether their Sony 4K HDR TV supports VRR with a PS5 over HDMI 2.1 or needs a firmware update.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #4028 (subject='Product compatibility', product='Sony 4K HDR TV'). Pre-purchase/spec question, no malfunction reported -- general, same reasoning as tc-018."
+    },
+    {
+      "id": "tc-050",
+      "email": "The brush roll on my Dyson Vacuum Cleaner has stopped spinning entirely, even though the motor still sounds like it's running normally.",
+      "expected_category": "technical",
+      "expected_summary": "The brush roll on their Dyson Vacuum Cleaner has stopped spinning even though the motor still runs.",
+      "difficulty": "easy",
+      "notes": "Source: Kaggle ticket #7297 (subject='Hardware issue', product='Dyson Vacuum Cleaner'). Auto-mapped as 'billing' -- overridden to technical, a hardware-malfunction report."
+    }
+  ]
+}
