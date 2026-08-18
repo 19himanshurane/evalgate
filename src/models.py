@@ -129,3 +129,15 @@ class ComparisonResult(BaseModel):
     regressions: list[CaseFlip]
     improvements: list[CaseFlip]
     severity: Severity
+
+
+class DriftResult(BaseModel):
+    """Rolling-average check across many runs -- catches gradual decline
+    that no single run-over-run diff would trigger, since each individual
+    step might be too small to flag on its own."""
+
+    window: int
+    current_moving_avg: float
+    best_moving_avg: float
+    drift: float
+    is_drifting: bool

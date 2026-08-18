@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timezone
+from pathlib import Path
 
 from openai import AsyncOpenAI, RateLimitError
 
@@ -131,6 +132,11 @@ def _aggregate(config: PromptConfig, dataset: GoldenDataset, results: list[CaseR
 def load_eval_run(path: str) -> EvalRun:
     with open(path, "r", encoding="utf-8") as f:
         return EvalRun.model_validate_json(f.read())
+
+
+def list_run_files(runs_dir: str = "runs") -> list[Path]:
+    """All saved run files, oldest first."""
+    return sorted(Path(runs_dir).glob("*.json"), key=lambda p: p.stat().st_mtime)
 
 
 async def run_eval(config: PromptConfig, dataset: GoldenDataset) -> EvalRun:

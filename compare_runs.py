@@ -9,14 +9,13 @@ Run: python compare_runs.py [--baseline runs/x.json] [--current runs/y.json]
 
 import argparse
 import sys
-from pathlib import Path
 
 from src.comparator import compare_runs
-from src.evaluator import load_eval_run
+from src.evaluator import list_run_files, load_eval_run
 
 
 def _two_most_recent_runs() -> tuple[str, str]:
-    files = sorted(Path("runs").glob("*.json"), key=lambda p: p.stat().st_mtime)
+    files = list_run_files()
     if len(files) < 2:
         raise SystemExit(
             f"Need at least 2 runs in /runs to compare, found {len(files)}. "
