@@ -53,3 +53,79 @@ class GoldenDataset(BaseModel):
     version: str
     created_at: str
     cases: list[TestCase]
+
+
+class JudgeScore(BaseModel):
+    """LLM-as-judge output: how well the predicted summary matches the
+    expected one, on a 1-5 scale, with a one-line reason."""
+
+    score: int = Field(ge=1, le=5)
+    reasoning: str
+
+
+class CaseResult(BaseModel):
+    """One test case's outcome for a single eval run."""
+
+    case_id: str
+    difficulty: Difficulty
+    expected_category: Category
+    predicted_category: Category
+    category_correct: bool
+    expected_summary: str
+    predicted_summary: str
+    summary_score: int
+    judge_reasoning: str
+    passed: bool
+    latency_ms: float
+    prompt_tokens: int
+    completion_tokens: int
+
+
+class EvalRun(BaseModel):
+    """A full run of the golden dataset against one prompt version --
+    this is what gets diffed against the previous run in Phase 3's
+    comparison logic, and what gets saved to /runs as a permanent record."""
+
+    prompt_version: str
+    model: str
+    dataset_version: str
+    timestamp: str
+    results: list[CaseResult]
+
+    total_cases: int
+    category_accuracy: float
+    pass_rate: float
+    avg_summary_score: float
+    avg_latency_ms: float
+    total_tokens: int
+    per_category_accuracy: dict[str, float]
+
+
+class CaseFlip(BaseModel):
+    """A single case whose pass/fail outcome changed between two runs."""
+
+    case_id: str
+    expected_category: Category
+    baseline_predicted: Category
+    current_predicted: Category
+    baseline_summary_score: int
+    current_summary_score: int
+
+
+Severity = Literal["critical", "warning", "ok", "improved"]
+
+
+class ComparisonResult(BaseModel):
+    """The diff between a baseline run and a current run -- the core value
+    of the whole system: not 'what's the score' but 'what changed'."""
+
+    baseline_version: str
+    current_version: str
+    baseline_timestamp: str
+    current_timestamp: str
+
+    pass_rate_delta: float
+    per_category_accuracy_delta: dict[str, float]
+    regressions: list[CaseFlip]
+    improvements: list[CaseFlip]
+    severity: Severity

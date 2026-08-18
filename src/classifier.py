@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 import yaml
-from openai import OpenAI
+from openai import AsyncOpenAI, OpenAI
 
 from src.models import EmailClassification, PromptConfig
 
@@ -14,6 +14,13 @@ GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 def get_client() -> OpenAI:
     """Groq exposes an OpenAI-compatible API — same SDK, different base_url/key."""
     return OpenAI(api_key=os.environ["GROQ_API_KEY"], base_url=GROQ_BASE_URL)
+
+
+def get_async_client() -> AsyncOpenAI:
+    """Async twin of get_client() -- lets the eval runner fire many requests
+    concurrently instead of waiting for each one to finish before starting
+    the next."""
+    return AsyncOpenAI(api_key=os.environ["GROQ_API_KEY"], base_url=GROQ_BASE_URL)
 
 
 def load_prompt_config(path: str | Path) -> PromptConfig:
@@ -62,6 +69,34 @@ def classify_email(
 
     start = time.perf_counter()
     completion = client.beta.chat.completions.parse(
+        model=config.model,
+        temperature=config.temperature,
+        messages=messages,
+        response_format=EmailClassification,
+    )
+    latency_ms = (time.perf_counter() - start) * 1000
+
+    parsed = completion.choices[0].message.parsed
+    usage = completion.usage
+
+    return ClassificationResult(
+        category=parsed.category,
+        summary=parsed.summary,
+        latency_ms=latency_ms,
+        prompt_tokens=usage.prompt_tokens if usage else 0,
+        completion_tokens=usage.completion_tokens if usage else 0,
+    )
+
+
+async def classify_email_async(
+    email_text: str, config: PromptConfig, client: AsyncOpenAI
+) -> ClassificationResult:
+    """Async twin of classify_email() -- same contract, used by the eval
+    runner so 50 test cases can be in flight at once instead of sequential."""
+    messages = _build_messages(config, email_text)
+
+    start = time.perf_counter()
+    completion = await client.beta.chat.completions.parse(
         model=config.model,
         temperature=config.temperature,
         messages=messages,
