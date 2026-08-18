@@ -5,6 +5,7 @@ Run: python generate_report.py [--current runs/x.json] [--baseline runs/y.json]
 
 import argparse
 from datetime import datetime, timezone
+from pathlib import Path
 
 from src.comparator import compare_runs
 from src.drift import detect_drift
@@ -45,6 +46,7 @@ def main() -> None:
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out_path = f"reports/report_{current.prompt_version}_{run_id}.html"
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
 
