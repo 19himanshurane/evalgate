@@ -1,0 +1,247 @@
+# evalgate
+
+CI/CD for prompts. `evalgate` runs a golden set of hand-verified test cases
+through an LLM-powered feature (right now: a customer support email
+classifier) on every pull request that touches `/prompts`, scores the
+output on more than exact-match accuracy, diffs the result against the
+last known-good run, and blocks the merge if it's a regression past a
+configurable threshold. On merge, it records the new run as the baseline
+for the next comparison and posts a Slack summary. The point isn't the
+classifier -- it's the harness. Swap the feature under test and the
+eval/diff/alert machinery underneath doesn't change.
+
+## How it fits together
+
+```
+prompts/*.yaml (versioned, immutable)
+        |
+        v
+run_eval.py  --------->  runs/<version>_<timestamp>.json
+  (async, scores category match + LLM-judge summary quality
+   + latency + tokens, against data/golden_dataset_v1.json)
+        |
+        v
+compare_runs.py  ------>  pass/warn/critical + regressions/improvements
+  (diffs two runs by case ID; also feeds Slack + PR comment markdown)
+        |
+        v
+generate_report.py  --->  reports/*.html   (self-contained, no CDN deps)
+send_alert.py        --->  Slack (Incoming Webhook)
+```
+
+CI (`.github/workflows/eval.yml`) wires this into two triggers:
+
+- **PR touching `/prompts`**: run eval on the changed prompt file, diff
+  against whatever's currently in `/runs`, post a sticky PR comment, fail
+  the check on a critical regression. Nothing is written back to the repo
+  -- you can push to the PR branch repeatedly without polluting history.
+- **Push to `main`** (i.e. that PR just merged): re-run eval, commit the
+  new run to `/runs` as the permanent new baseline, send the Slack alert.
+  This is what makes the *next* PR's comparison meaningful.
+
+## Setup
+
+```bash
+git clone https://github.com/19himanshurane/evalgate.git
+cd evalgate
+python -m venv .venv && .venv/Scripts/activate  # or source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+Fill in `.env`:
+
+- `GROQ_API_KEY` -- required. We use [Groq](https://console.groq.com/keys)
+  (free tier, OpenAI-compatible API) instead of OpenAI, purely because it's
+  free. If you swap providers, the only file that needs to change is
+  `src/classifier.py`'s `get_client()`/`get_async_client()`. **Model
+  constraint**: structured outputs (`response_format=json_schema`, which
+  we rely on for guaranteed-valid category labels) only work on Groq's
+  `openai/gpt-oss-20b` and `openai/gpt-oss-120b`. Other Groq models will
+  reject the request outright.
+- `SLACK_WEBHOOK_URL` -- optional locally, required for the merge-time
+  Slack alert. Create one at your Slack app's *Incoming Webhooks* page.
+
+Sanity check the classifier works before touching the eval pipeline:
+
+```bash
+python try_classifier.py
+```
+
+## Running the pipeline locally
+
+```bash
+python run_eval.py --prompt prompts/email_classifier_v3.yaml   # writes runs/v3_<ts>.json
+python compare_runs.py                                          # diffs the 2 most recent runs in /runs
+python generate_report.py                                       # writes reports/report_<version>_<ts>.html
+python send_alert.py                                             # posts to Slack, needs SLACK_WEBHOOK_URL
+```
+
+`compare_runs.py` and `generate_report.py` default to "the two most
+recent files in `/runs` by mtime," which is what you want 95% of the
+time. Pass `--baseline`/`--current` explicitly if you need to diff two
+specific runs out of order.
+
+## Adding test cases to the golden dataset
+
+`data/golden_dataset_v1.json` is the ground truth every run is scored
+against. Each case:
+
+```json
+{
+  "id": "tc-051",
+  "email": "...",
+  "expected_category": "billing",
+  "expected_summary": "One sentence, customer's perspective.",
+  "difficulty": "easy",
+  "notes": "Why this case exists / why you picked this label."
+}
+```
+
+Rules that matter:
+
+- **IDs are permanent.** Don't renumber existing cases when you add new
+  ones -- `tc-051` onward. Renumbering breaks case-ID matching in
+  `compare_runs.py`, which is how regressions get attributed to a
+  specific case rather than just "accuracy went down somewhere."
+- **Write it yourself; don't generate it with an LLM.** The whole value
+  of this dataset is that it's an independent, human-verified check on
+  the model. If the same class of model writes both the questions and
+  the answer key, you've built a mirror, not a test.
+- **The best source of new cases is real failures.** When a run fails a
+  case that wasn't in the dataset before (a support ticket that tripped
+  up the classifier in practice, a case a teammate found manually), add
+  it, with the correct label, so a future prompt change can never
+  silently regress on that exact input again. This is the same instinct
+  as adding a regression test when you fix a bug.
+- **Deliberately include hard cases** -- ambiguous ones that could
+  reasonably go either way, very short inputs, typos, sarcasm, mixed
+  language. Tag `difficulty` honestly and explain the reasoning in
+  `notes`, especially when the "correct" label is genuinely arguable.
+  Run `python validate_dataset.py` to check schema, category/difficulty
+  spread, and duplicate IDs after editing.
+- **Bump the dataset version** (`golden_dataset_v2.json`, updating
+  `version` inside the file) if you ever change enough cases that old
+  scores stop being comparable to new ones. `compare_runs.py` matches
+  cases by ID across runs; it doesn't currently warn you if the dataset
+  version changed between two runs you're diffing, so don't compare
+  across dataset versions by hand.
+
+## Adjusting thresholds
+
+Pass rate deltas are classified `improved` / `ok` / `warning` (>3% drop)
+/ `critical` (>8% drop) -- see `src/comparator.py`. Override without a
+code change:
+
+```bash
+EVAL_WARNING_THRESHOLD=0.05 EVAL_CRITICAL_THRESHOLD=0.10 python compare_runs.py
+```
+
+In CI, set these as [repository variables](../../settings/variables/actions)
+(`EVAL_WARNING_THRESHOLD`, `EVAL_CRITICAL_THRESHOLD`) -- not secrets,
+they're not sensitive. In Docker, pass them as `-e` flags (defaults are
+baked into the image via `ENV`, see `Dockerfile`).
+
+Drift detection (`src/drift.py`) is separate and not currently
+configurable via env var: it flags when the 7-run trailing average of
+pass rate falls more than 5 points below its historical best, which
+catches a slow bleed that no single-run diff would ever cross the
+warning threshold on. If you need that configurable too, it's a small
+change to `DEFAULT_WINDOW`/`DEFAULT_DRIFT_THRESHOLD` in that file.
+
+## Running with Docker
+
+```bash
+docker build -t evalgate .
+docker run --rm --env-file .env -v "${PWD}/runs:/app/runs" evalgate run_eval.py --prompt prompts/email_classifier_v3.yaml
+docker run --rm --env-file .env -v "${PWD}/runs:/app/runs" evalgate compare_runs.py
+```
+
+On Windows + Git Bash specifically: `$(pwd)`/`${PWD}` gets POSIX-converted
+and collides with the `-v host:container` colon syntax, silently
+producing a garbage mount path instead of an error. Prefix the command
+with `MSYS_NO_PATHCONV=1`, or just pass an explicit Windows path
+(`-v "E:\path\to\evalgate\runs:/app/runs"`).
+
+The image's `ENTRYPOINT` is `python`; `CMD` defaults to `run_eval.py`.
+Override the argument to run any of the other scripts. Mount `/app/runs`
+(and `/app/reports` if you want the HTML report on the host) so output
+survives the container exiting -- nothing is persisted inside the image
+itself.
+
+## CI/CD setup
+
+Add these to the repo (Settings -> Secrets and variables -> Actions):
+
+- **Secrets**: `GROQ_API_KEY`, `SLACK_WEBHOOK_URL`
+- **Variables** (optional): `EVAL_WARNING_THRESHOLD`, `EVAL_CRITICAL_THRESHOLD`
+
+For the critical-regression check to actually block merges, mark
+`pr-check` as a required status check under branch protection for `main`.
+GitHub Actions failing a job doesn't block anything on its own -- that's
+a separate setting you have to turn on.
+
+The `record-baseline` job pushes directly to `main` using the default
+`GITHUB_TOKEN` (`permissions: contents: write`). If branch protection is
+configured to block *all* direct pushes with no exceptions, that push
+will fail. Either allow this workflow specifically, or switch that job
+to opening its own small PR instead -- not implemented here since it adds
+a second review step for what's meant to be a background bookkeeping
+commit.
+
+## Architecture decisions and why
+
+**Prompts are files, not database rows or inline strings.** Versioned
+YAML in `/prompts`, one immutable file per version. This is what makes
+"diff two prompt versions" the same primitive as "diff two commits" --
+you get git history, review, and rollback for free instead of building
+prompt versioning as a bespoke feature.
+
+**Scoring is multi-dimensional, not just category accuracy.** A prompt
+change that keeps category accuracy flat but quietly makes summaries
+worse, or triples latency, is still a regression. Category match is
+binary and cheap to check; summary quality isn't checkable by string
+equality, so it's scored by a second model acting as judge.
+
+**The judge is a different (larger) model than the one under test**
+(`openai/gpt-oss-120b` judging, `-20b` or whichever model is configured
+as the classifier). Grading your own homework with the same model
+under test risks correlated blind spots -- a systematic misunderstanding
+the classifier has could produce a judge that shares it and rates the
+mistake as fine.
+
+**Async with a small concurrency cap and retry-after-aware backoff, not
+plain sequential calls or naive high concurrency.** This runs on a free
+API tier with a strict tokens-per-minute budget. High concurrency
+sounds faster but just produces a wall of 429s; the fix was reading the
+API's own `retry-after` header rather than guessing at backoff timing.
+On a paid tier with a real rate limit budget, `CONCURRENCY` in
+`src/evaluator.py` is the one constant to raise.
+
+**Comparison matches cases by ID, not by position or content.** This is
+what makes "tc-026 regressed" a meaningful, stable statement across
+runs instead of "row 26 in the results changed," which breaks the
+moment the dataset is reordered.
+
+**Drift detection is a separate mechanism from per-run diffing, not a
+lower threshold on the same check.** A prompt that erodes by 1% every
+run for ten runs straight never crosses an 8% or even 3% single-run
+threshold -- each step is noise-sized on its own. The rolling average in
+`src/drift.py` is specifically for catching that shape of failure, which
+per-run diffs structurally cannot.
+
+**PRs never write back to the repo; merges do.** Keeps PR iteration
+(push, see comment, push again) from generating throwaway commits, while
+still giving every merge a permanent, comparable record in `/runs`
+that the next PR diffs against.
+
+**The golden dataset was sourced from a public Kaggle ticket dataset's
+metadata (ticket type, product, subject line), not its actual ticket
+text.** The raw text turned out to be broken -- unsubstituted template
+placeholders and garbled sentence concatenation in every single row (see
+`scripts/build_dataset_candidates.py`'s docstring and git history for
+specifics). Real category distribution and product variety were still
+worth keeping; the actual email text and labels were written and
+verified by hand against that scaffolding. Categories were re-judged
+per case rather than trusting the source dataset's own type labels,
+which frequently disagreed with its own more specific subject field.

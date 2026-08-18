@@ -1,5 +1,7 @@
 from src.models import CaseFlip, ComparisonResult, EvalRun, Severity
 
+_EMOJI = {"critical": "🚨", "warning": "⚠️", "ok": "✅", "improved": "🎉"}
+
 # "Is this delta signal or noise?" thresholds from the brief. These apply to
 # DROPS in pass rate specifically -- an improvement is never something CI
 # should block on, no matter how large.
@@ -80,3 +82,50 @@ def compare_runs(
         improvements=sorted(improvements, key=lambda f: f.case_id),
         severity=_severity(pass_rate_delta, warning_threshold, critical_threshold),
     )
+
+
+def build_pr_comment_markdown(current: EvalRun, baseline: EvalRun, result: ComparisonResult) -> str:
+    """Renders a ComparisonResult as GitHub-flavored markdown, for posting
+    directly as a PR comment from CI."""
+    sign = "+" if result.pass_rate_delta >= 0 else ""
+    lines = [
+        f"## {_EMOJI[result.severity]} evalgate: {result.severity.upper()}",
+        "",
+        f"Pass rate: **{current.pass_rate:.1%}** ({sign}{result.pass_rate_delta:.1%}) "
+        f"&middot; {len(result.regressions)} regression(s) &middot; {len(result.improvements)} improvement(s)",
+        "",
+        f"Prompt `{baseline.prompt_version}` &rarr; `{current.prompt_version}` &middot; "
+        f"model `{current.model}` &middot; dataset `{current.dataset_version}`",
+        "",
+        "| Metric | Current | Baseline | Delta |",
+        "|---|---|---|---|",
+        f"| Pass rate | {current.pass_rate:.1%} | {baseline.pass_rate:.1%} | {sign}{result.pass_rate_delta:.1%} |",
+        f"| Category accuracy | {current.category_accuracy:.1%} | {baseline.category_accuracy:.1%} | "
+        f"{current.category_accuracy - baseline.category_accuracy:+.1%} |",
+        f"| Avg summary score | {current.avg_summary_score:.2f}/5 | {baseline.avg_summary_score:.2f}/5 | "
+        f"{current.avg_summary_score - baseline.avg_summary_score:+.2f} |",
+        f"| Avg latency | {current.avg_latency_ms:.0f}ms | {baseline.avg_latency_ms:.0f}ms | "
+        f"{current.avg_latency_ms - baseline.avg_latency_ms:+.0f}ms |",
+        "",
+    ]
+
+    if result.regressions:
+        lines.append(f"### {len(result.regressions)} regression(s)")
+        lines.append("")
+        lines.append("| Case | Expected | Baseline predicted | Current predicted |")
+        lines.append("|---|---|---|---|")
+        for f in result.regressions:
+            lines.append(f"| {f.case_id} | {f.expected_category} | {f.baseline_predicted} | {f.current_predicted} |")
+        lines.append("")
+    else:
+        lines.append("No regressions.")
+        lines.append("")
+
+    if result.improvements:
+        case_list = ", ".join(f.case_id for f in result.improvements)
+        lines.append(f"<details><summary>{len(result.improvements)} improvement(s)</summary>\n\n{case_list}\n\n</details>")
+
+    if result.severity == "critical":
+        lines.append("\n**This blocks merge** -- pass rate dropped more than the critical threshold.")
+
+    return "\n".join(lines)
