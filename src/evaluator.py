@@ -1,4 +1,5 @@
 import asyncio
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -135,8 +136,21 @@ def load_eval_run(path: str) -> EvalRun:
 
 
 def list_run_files(runs_dir: str = "runs") -> list[Path]:
-    """All saved run files, oldest first."""
-    return sorted(Path(runs_dir).glob("*.json"), key=lambda p: p.stat().st_mtime)
+    """All saved run files, oldest first.
+
+    Sorted by each run's own recorded `timestamp` field, not filesystem
+    mtime. A fresh `git checkout` gives every pre-existing tracked file
+    the same mtime, which made the old mtime-based sort effectively
+    arbitrary among files checked out together -- non-deterministic in
+    exactly the CI environment this matters most in, since that's every
+    run except a developer's first local one.
+    """
+
+    def _timestamp(path: Path) -> str:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)["timestamp"]
+
+    return sorted(Path(runs_dir).glob("*.json"), key=_timestamp)
 
 
 async def run_eval(config: PromptConfig, dataset: GoldenDataset) -> EvalRun:
