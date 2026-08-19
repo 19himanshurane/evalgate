@@ -37,7 +37,16 @@ CI (`.github/workflows/eval.yml`) wires this into two triggers:
   -- you can push to the PR branch repeatedly without polluting history.
 - **Push to `main`** (i.e. that PR just merged): re-run eval, commit the
   new run to `/runs` as the permanent new baseline, send the Slack alert.
-  This is what makes the *next* PR's comparison meaningful.
+  This is what makes the *next* PR's comparison meaningful. It also
+  rewrites `prompts/ACTIVE` (see below) to point at the merged prompt.
+
+`prompts/ACTIVE` is a one-line pointer file naming whichever prompt is
+currently live (e.g. `email_classifier_v4.yaml`). `run_eval.py` and
+`try_classifier.py` both default to it via `src.classifier.active_prompt_path()`
+rather than a hardcoded filename -- a hardcoded default silently goes
+stale the moment a new version ships, since nothing forces it to be
+bumped. CI keeps it in sync automatically on every merge; you should
+never need to edit it by hand.
 
 ## Setup
 

@@ -5,7 +5,7 @@ Run: python try_classifier.py
 
 from dotenv import load_dotenv
 
-from src.classifier import classify_email, get_client, load_prompt_config
+from src.classifier import active_prompt_path, classify_email, get_client, load_prompt_config
 
 load_dotenv()
 
@@ -18,7 +18,7 @@ SAMPLE_EMAILS = [
 
 
 def main() -> None:
-    config = load_prompt_config("prompts/email_classifier_v1.yaml")
+    config = load_prompt_config(active_prompt_path())
     client = get_client()
 
     print(f"Using prompt version: {config.version} ({config.model})\n")

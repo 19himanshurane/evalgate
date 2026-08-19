@@ -30,6 +30,18 @@ def load_prompt_config(path: str | Path) -> PromptConfig:
     return PromptConfig(**raw)
 
 
+def active_prompt_path(prompts_dir: str | Path = "prompts") -> Path:
+    """Whichever prompt is currently live, per /prompts/ACTIVE -- a
+    one-line pointer file, not a hardcoded default. Without this, a
+    script's default (e.g. argparse's --prompt default) silently goes
+    stale the moment a new version ships, since nothing forces it to be
+    bumped. CI's record-baseline job rewrites ACTIVE on every merge, so
+    it can't drift out of sync with what's actually deployed."""
+    prompts_dir = Path(prompts_dir)
+    pointer = (prompts_dir / "ACTIVE").read_text(encoding="utf-8").strip()
+    return prompts_dir / pointer
+
+
 def _build_messages(config: PromptConfig, email_text: str) -> list[dict]:
     messages = [{"role": "system", "content": config.system_prompt}]
 

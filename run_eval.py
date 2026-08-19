@@ -1,6 +1,9 @@
 """Runs the golden dataset against a prompt version and saves the result.
 
-Run: python run_eval.py [--prompt prompts/email_classifier_v1.yaml] [--dataset data/golden_dataset_v1.json]
+Run: python run_eval.py [--prompt prompts/email_classifier_v4.yaml] [--dataset data/golden_dataset_v1.json]
+
+--prompt defaults to whatever /prompts/ACTIVE points at (the current
+production prompt), not a hardcoded filename.
 """
 
 import argparse
@@ -10,7 +13,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from src.classifier import load_prompt_config
+from src.classifier import active_prompt_path, load_prompt_config
 from src.dataset import load_golden_dataset
 from src.evaluator import run_eval
 
@@ -19,7 +22,7 @@ async def main() -> None:
     load_dotenv()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", default="prompts/email_classifier_v1.yaml")
+    parser.add_argument("--prompt", default=str(active_prompt_path()))
     parser.add_argument("--dataset", default="data/golden_dataset_v1.json")
     args = parser.parse_args()
 

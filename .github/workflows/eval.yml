@@ -151,11 +151,15 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: python send_alert.py
 
+      - name: Update the active-prompt pointer
+        if: steps.changed.outputs.prompt_file != ''
+        run: basename "${{ steps.changed.outputs.prompt_file }}" > prompts/ACTIVE
+
       - name: Commit the new baseline run
         if: steps.changed.outputs.prompt_file != ''
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add runs/*.json
+          git add runs/*.json prompts/ACTIVE
           git diff --staged --quiet && echo "Nothing new to commit" || git commit -m "Record eval run for merged prompt change [skip ci]"
           git push
