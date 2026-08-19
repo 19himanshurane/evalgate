@@ -6,6 +6,7 @@ Run: python run_eval.py [--prompt prompts/email_classifier_v1.yaml] [--dataset d
 import argparse
 import asyncio
 from datetime import datetime, timezone
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -49,6 +50,7 @@ async def main() -> None:
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out_path = f"runs/{config.version}_{run_id}.json"
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(eval_run.model_dump_json(indent=2))
     print(f"\nSaved run to {out_path}")

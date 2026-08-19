@@ -42,8 +42,11 @@ def main() -> None:
 
     # Configurable per the brief -- via env vars so the Docker container
     # (Phase 5) can tune sensitivity without a code change or rebuild.
-    warning_threshold = float(os.environ.get("EVAL_WARNING_THRESHOLD", WARNING_THRESHOLD))
-    critical_threshold = float(os.environ.get("EVAL_CRITICAL_THRESHOLD", CRITICAL_THRESHOLD))
+    # `or` (not .get(key, default)) matters here: an unset GitHub Actions
+    # `vars.X` expands to an empty string, not an absent env var, so
+    # .get()'s default would never kick in and float("") would crash.
+    warning_threshold = float(os.environ.get("EVAL_WARNING_THRESHOLD") or WARNING_THRESHOLD)
+    critical_threshold = float(os.environ.get("EVAL_CRITICAL_THRESHOLD") or CRITICAL_THRESHOLD)
 
     print(f"Baseline: {baseline_path}  (prompt {baseline.prompt_version}, pass rate {baseline.pass_rate:.1%})")
     print(f"Current:  {current_path}  (prompt {current.prompt_version}, pass rate {current.pass_rate:.1%})")
