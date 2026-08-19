@@ -37,6 +37,12 @@ That last row is the actual point of the project: the harness didn't just
 watch pass rate go up, it registered a small, real cost on a later
 change and made the right call not to block it.
 
+<p align="center">
+  <img src="docs/images/report_screenshot.png" alt="evalgate HTML report showing the scorecard for the v4 run against the v3 baseline" width="820">
+  <br>
+  <sub>The actual self-contained HTML report generate_report.py produces for the v4 run above — no mockup, generated from a real recorded run.</sub>
+</p>
+
 It also caught real bugs, not just prompt regressions. A test PR
 ([#1](https://github.com/19himanshurane/evalgate/pull/1)) opened
 specifically to prove the GitHub Action worked end-to-end surfaced two
@@ -61,21 +67,16 @@ for the full writeup.
 
 ## How it fits together
 
-```
-prompts/*.yaml (versioned, immutable)
-        |
-        v
-run_eval.py  --------->  runs/<version>_<timestamp>.json
-  (async, scores category match + LLM-judge summary quality
-   + latency + tokens, against data/golden_dataset_v1.json)
-        |
-        v
-compare_runs.py  ------>  pass/warn/critical + regressions/improvements
-  (diffs two runs by case ID; also feeds Slack + PR comment markdown)
-        |
-        v
-generate_report.py  --->  reports/*.html   (self-contained, no CDN deps)
-send_alert.py        --->  Slack (Incoming Webhook)
+```mermaid
+flowchart TD
+    P["prompts/*.yaml<br/>versioned, immutable"] --> R["run_eval.py<br/>async · category match + LLM-judge<br/>summary quality + latency + tokens"]
+    D["data/golden_dataset_v1.json<br/>50 hand-verified cases"] --> R
+    R --> J["runs/&lt;version&gt;_&lt;timestamp&gt;.json"]
+    J --> C["compare_runs.py<br/>diffs two runs by case ID"]
+    C --> S["pass / warn / critical<br/>+ regressions / improvements"]
+    S --> H["generate_report.py<br/>reports/*.html — self-contained, no CDN"]
+    S --> A["send_alert.py<br/>Slack Incoming Webhook"]
+    S --> M["PR comment markdown"]
 ```
 
 CI (`.github/workflows/eval.yml`) wires this into two triggers:
